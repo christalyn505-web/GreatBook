@@ -1,0 +1,172 @@
+/* ===========================================================================
+   intro.css, the parallax section: five panels riding over a slower backdrop
+   ---------------------------------------------------------------------------
+   LAYER MODEL (see js/scroll.js for the matching maths):
+
+     .intro                 the section. Its height is set explicitly in
+                            --intro-screens so the amount of scroll before the
+                            backdrop is fully revealed is a deliberate number,
+                            not an accident of how much text the panels hold.
+
+     .intro__bg-sticky      position:sticky, 100dvh tall. Being sticky means it
+                            is BOUNDED BY .intro, it stops existing when the
+                            section ends. That is what produces the abrupt clip
+                            to white at the table of contents, with no cleanup
+                            code and no scroll listener to un-hide anything.
+
+     .intro__bg             the thing that actually moves. Taller than the
+                            viewport so there is headroom to translate into.
+                            scroll.js writes translate3d() here and nowhere
+                            else.
+
+     .intro__panels         normal document flow. Rate 1.0 by definition.
+   =========================================================================== */
+
+.intro {
+  --intro-screens: 5;              /* how many viewport-heights of scroll     */
+  position: relative;
+  min-height: calc(var(--intro-screens) * 100vh);
+  min-height: calc(var(--intro-screens) * 100dvh);
+  background: var(--ink);
+  color: var(--text-on-dark);
+  isolation: isolate;
+}
+
+/* --- layer 0: the backdrop ------------------------------------------------ */
+
+.intro__bg-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.intro__bg {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  /* Fallback only. js/scroll.js overwrites this with the exact height the
+     parallax travel needs, computed from the section length and
+     PARALLAX_RATE, so the backdrop can never run out of travel mid-section.
+     This value is what shows if scripting is off, where nothing moves anyway. */
+  height: 165vh;
+  height: 165dvh;
+  will-change: transform;          /* on this element and nowhere else        */
+  background:
+    radial-gradient(ellipse 70% 40% at 30% 10%, rgba(var(--water-rgb), 0.34), transparent 65%),
+    radial-gradient(ellipse 60% 45% at 78% 64%, rgba(var(--accent-rgb), 0.34), transparent 62%),
+    linear-gradient(178deg, #26402f 0%, #1a2e22 48%, #223a2b 100%);
+}
+
+/* Optional: drop a still image in later without touching the JS.
+   <div class="intro__bg" style="background-image:url('./assets/img/backdrop.jpg')">
+   and add this class to blur + dim it exactly like the story pages do. */
+.intro__bg--photo {
+  background-size: cover;
+  background-position: center;
+  filter: blur(22px) brightness(0.42) saturate(0.9);
+  transform-origin: center;
+  /* blur() samples outside the box; scale up so the soft edge never shows */
+  scale: 1.12;
+}
+
+/* A subtle grain/vignette so the flat gradient does not band on cheap panels. */
+.intro__bg-sticky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 65% at 50% 45%,
+              transparent 45%, rgba(var(--ink-rgb), 0.6) 100%);
+}
+
+/* --- layer 2: the panels -------------------------------------------------- */
+
+.intro__panels {
+  position: relative;
+  z-index: 2;
+  /* Pull the panels up over the sticky backdrop: the sticky element already
+     consumed 100dvh of layout box, and we want the panels to start scrolling
+     over it immediately. */
+  margin-top: -100vh;
+  margin-top: -100dvh;
+  padding: 0 var(--gutter);
+}
+
+.intro__panel {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 4rem 0;
+}
+
+/* Alternate the alignment so the eye travels rather than tracking a rail. */
+.intro__panel:nth-child(even) {
+  justify-items: end;
+  text-align: right;
+}
+
+.intro__panel h2 {
+  font-size: clamp(1.85rem, 1.2rem + 3vw, 3.4rem);
+  color: var(--text-on-dark);
+  max-width: 14ch;
+}
+
+.intro__panel p {
+  font-size: clamp(1.02rem, 0.96rem + 0.4vw, 1.3rem);
+  color: var(--text-on-dark-muted);
+  max-width: 46ch;
+  margin: 0;
+}
+
+.intro__panel-num {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 1.1rem;
+  display: block;
+}
+
+/* Panels fade up as they enter. IntersectionObserver in scroll.js adds
+   .is-visible; if JS fails the default state below still shows everything. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .intro__panel {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition: opacity 800ms var(--ease), transform 800ms var(--ease);
+  }
+  .js .intro__panel.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- the scroll cue on the first panel ------------------------------------ */
+
+.intro__scroll-cue {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-muted);
+  pointer-events: none;
+  animation: cue-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes cue-bob {
+  0%, 100% { transform: translate(-50%, 0); opacity: 0.55; }
+  50%      { transform: translate(-50%, 8px); opacity: 1; }
+}

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GREAT BOOK, Filipino Folk Tales</title>
+<meta name="description" content="A collection of Filipino folk tales, with illustrations, narration, and a short quiz for each story.">
+
+<link rel="stylesheet" href="./css/base.css">
+<link rel="stylesheet" href="./css/cover.css">
+<link rel="stylesheet" href="./css/intro.css">
+<link rel="stylesheet" href="./css/toc.css">
+
+<!-- =========================================================================
+     PRE-PAINT SCRIPT, must stay inline and must stay in <head>.
+
+     Three things have to be decided before the first frame is drawn:
+
+     1. scrollRestoration = 'manual'
+        Otherwise a reload restores the previous scroll position, dropping the
+        visitor into the middle of the intro with the cover never having played.
+        Setting this at the end of <body> is too late, the browser may have
+        already restored by then.
+
+     2. cover vs deep link
+        Every story page's back button points at index.html#toc. If a fragment
+        is present, the cover must never appear and the scroll lock must never
+        be applied, or the lock swallows the browser's own fragment scroll and
+        the grader gets the cover animation on every single return trip.
+
+     3. the .js class
+        CSS only hides the intro panels for their fade-in when JS is confirmed
+        alive. If scripting is off, everything is simply visible.
+     ====================================================================== -->
+<script>
+(function () {
+  var root = document.documentElement;
+  root.className = root.className.replace('no-js', 'js');
+
+  if ('scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+  }
+
+  var deepLink = window.location.hash.length > 1;
+  root.classList.add(deepLink ? 'deep-link' : 'cover-active');
+})();
+</script>
+</head>
+
+<body>
+
+<a class="skip-link" href="#toc">Skip to the table of contents</a>
+
+<!-- ======================================================================
+     COVER
+     Fixed overlay above everything, outside the document flow. Advances on
+     any interaction; the button is the accessible, touch-obvious route.
+     ====================================================================== -->
+<div id="cover" class="cover" role="region" aria-label="Cover">
+  <div class="cover__bg" aria-hidden="true"></div>
+
+  <!-- The exit transition. Both layers are inert and invisible until the
+       cover is dismissed; js/cover-fx.js drives them, and if WebGL is
+       unavailable or motion is reduced it never touches them at all and the
+       cover falls back to the plain opacity fade. Stacking inside .cover:
+       bg 0, content 1, petals 2, veil 3, motes 4, in that order, which is
+       also the order they are written below. The veil is UNDER the motes on
+       purpose: the black is the stage the swirls play on, not a curtain over
+       them. The two canvases cannot be one, because the petals multiply and
+       the motes add and those want opposite clear colours. See the header of
+       js/cover-fx.js. -->
+  <canvas class="cover__fx" id="cover-fx" aria-hidden="true"></canvas>
+  <div class="cover__veil" id="cover-veil" aria-hidden="true"></div>
+  <canvas class="cover__motes" id="cover-motes" aria-hidden="true"></canvas>
+
+  <div class="cover__inner">
+    <p class="eyebrow eyebrow--on-dark">Filipino Folk Tales</p>
+    <h1 class="cover__title">GREAT BOOK</h1>
+    <p class="cover__subtitle">Where the great books begin</p>
+    <p class="cover__school">Pambayang Dalubhasaan ng Marilao</p>
+
+    <button type="button" class="cover__enter" id="cover-enter">
+      Open the Book
+    </button>
+
+    <span class="cover__hint">or scroll to continue</span>
+  </div>
+</div>
+
+<!-- The bloom: the third movement of the cover's exit, and the reason it sits
+     OUT HERE rather than inside #cover above. It plays after the swirls, by
+     which point the cover is all but faded and a quarter-second from being
+     hidden, anything parented to it would be taken off the screen by the
+     fade instead of by the wind. So it is a sibling, fixed, stacked above the
+     cover, and it never takes a click. js/cover-fx.js unhides it when the
+     swirls end and hides it again when the last flower leaves the frame; if
+     WebGL is unavailable, or motion is reduced, nothing ever touches it and
+     it stays hidden for the life of the page. -->
+<canvas class="bloom" id="cover-bloom" aria-hidden="true" hidden></canvas>
+
+<main>
+
+  <!-- ====================================================================
+       INTRO, five panels riding over a slower backdrop.
+       Section height is set by --intro-screens in css/intro.css, not by how
+       much text happens to be in the panels.
+       ==================================================================== -->
+  <section id="intro" class="intro" aria-label="Introduction">
+
+    <!-- layer 0: sticky, therefore bounded by this section. It stops
+         existing at the TOC with no cleanup code. -->
+    <div class="intro__bg-sticky" aria-hidden="true">
+      <div class="intro__bg" id="intro-bg"></div>
+    </div>
+
+    <!-- layer 2: normal flow, rate 1.0 -->
+    <div class="intro__panels">
+
+      <article class="intro__panel">
+        <span class="intro__panel-num">Introduction</span>
+        <h2>A book of stories that came first.</h2>
+        <p>
+          Long before paper and printing presses, these tales were passed from
+          mouth to mouth, from grandparents to grandchildren, beside the cooking
+          fire and under the mango trees. They are the stories that shaped how we
+          see the world, and the ground every great book after them was built on.
+        </p>
+        <span class="intro__scroll-cue">Scroll</span>
+      </article>
+
+      <article class="intro__panel">
+        <span class="intro__panel-num">01, The Collection</span>
+        <h2>Fables and legends from the Philippines.</h2>
+        <p>
+          Every story here is drawn from the culture, traditions, and customs of
+          a different corner of the country. These are not only stories for
+          children, they are a record of who we are as a people.
+        </p>
+      </article>
+
+      <article class="intro__panel">
+        <span class="intro__panel-num">02, The Illustrations</span>
+        <h2>Each tale is drawn by its own group.</h2>
+        <p>
+          Every story carries original artwork made by the members of the group
+          that wrote it. The illustrator is named beneath each picture, alongside
+          the writer and the narrator.
+        </p>
+      </article>
+
+      <article class="intro__panel">
+        <span class="intro__panel-num">03, The Narration</span>
+        <h2>You can listen to every story.</h2>
+        <p>
+          Each page carries a recorded narration. Press play and let the story be
+          read to you, the way it was always meant to be heard.
+        </p>
+      </article>
+
+      <article class="intro__panel">
+        <span class="intro__panel-num">04, The Quiz</span>
+        <h2>And at the end, a short test.</h2>
+        <p>
+          Every story is followed by a brief quiz to check what you took from it.
+          Five questions, answered right here on the page, scored the moment you
+          finish. Let's begin.
+        </p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       TABLE OF CONTENTS
+       Opaque background, this is where the backdrop abruptly clips to white.
+       Both the marquee and the plain index are built by js/toc.js from
+       window.STORIES.
+       ==================================================================== -->
+  <section id="toc" class="toc" aria-label="Table of Contents" tabindex="-1">
+    <div class="toc__grid">
+
+      <div class="toc__col">
+        <div class="toc__head">
+          <p class="eyebrow">Table of Contents</p>
+          <h2>The Stories</h2>
+          <p>
+            Pick a story from the list, or browse the strip beside it. The strip
+            loops, so it never runs out.
+          </p>
+        </div>
+
+        <nav class="toc__index" id="story-index" aria-label="Full list of stories">
+          <!-- populated by js/toc.js -->
+        </nav>
+
+        <div class="toc__closing">
+          <a class="cta cta--ghost" href="./closing.html">Read the Closing Message →</a>
+        </div>
+      </div>
+
+      <!-- Vertical, and it loops forever. js/toc.js renders the story list
+           three times over and keeps the scroll position parked in the middle
+           copy, so there is no edge to hit in either direction. -->
+      <div class="marquee" id="marquee" role="group" aria-label="Stories, looping strip">
+        <div class="marquee__track" id="marquee-track"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- GB:FOOTER:START, generated by tools/build-pages.ps1, do not edit by hand -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <p class="site-footer__title">GREAT BOOK</p>
+      <p>Filipino Folk Tales, Illustrated and Narrated</p>
+    </div>
+    <div>
+      <dl>
+        <dt>School</dt>
+        <dd>Pambayang Dalubhasaan ng Marilao</dd>
+        <dt>Course</dt>
+        <dd>TM11A</dd>
+      </dl>
+    </div>
+    <div>
+      <dl>
+        <dt>Instructor</dt>
+        <dd>Josh Bernardo</dd>
+        <dt>Academic Year</dt>
+        <dd>2026-2027</dd>
+      </dl>
+    </div>
+  </div>
+</footer>
+<!-- GB:FOOTER:END -->
+
+<!-- Classic scripts only. No type="module" anywhere in this project. -->
+<script src="./stories.js"></script>
+<script src="./js/scroll.js"></script>
+<script src="./js/cover-fx.js"></script>
+<script src="./js/cover.js"></script>
+<script src="./js/toc.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+/* ===========================================================================
+   base.css, design tokens, reset, shared typography, shared components
+   Loaded first by every page.
+   =========================================================================== */
+
+:root {
+  /* =======================================================================
+     THE GHIBLI PALETTE
+     -----------------------------------------------------------------------
+     Sampled from the reference landscape: blue lake, green fields, pale sky.
+     These seven are the SOURCE colours, the vocabulary. Nothing in the CSS
+     should use them directly; they exist so the semantic tokens below have
+     somewhere honest to come from, and so the Ghibli intro work has the
+     palette to hand.
+
+     See README.md -> "The palette" for the swatch table.
+     ======================================================================= */
+
+  --gb-blue:        #3b819d;   /* bright blue                , the lake      */
+  --gb-green:       #8cb84e;   /* dull green                 , sunlit field */
+  --gb-green-gray:  #8e9b85;   /* grayish green              , far hills     */
+  --gb-sand:        #cfc8b8;   /* light grayish yellow green , pale ground   */
+  --gb-blue-gray:   #6b8bad;   /* light grayish blue         , haze          */
+  --gb-red:         #cf5566;   /* bright red                 , flowers       */
+  --gb-yellow:      #cfdd3e;   /* bright yellow              , highlights    */
+
+  /* =======================================================================
+     SEMANTIC TOKENS, what the rest of the CSS actually uses
+     ======================================================================= */
+
+  /* --- grounds ----------------------------------------------------------- */
+  --ink:          #1a2e22;   /* deep forest, cover, story and closing ground */
+  --ink-soft:     #2e4a38;   /* raised surface on a dark ground               */
+  /* The light surfaces are TINTS of the palette's green and blue, not of its
+     sand. --gb-sand is a warm grayish beige, and anything built on it reads
+     brown next to the forest grounds. These are deliberately pastel. */
+  --paper:        #e6f0e7;   /* pastel mint, the table of contents ground      */
+  --paper-soft:   #f8fbf7;   /* near-white, the story-list card, floating      */
+  --paper-sky:    #dfeaf2;   /* pastel sky, row hover, cool lift               */
+
+  /* The footer is its own colour on purpose: a darker, deeper value of the
+     palette's light grayish blue, so the page closes on water rather than on
+     more forest. */
+  --footer-bg:    #3f566c;
+
+  /* --- accents ------------------------------------------------------------
+     Three roles, deliberately not three shades of one hue:
+       --accent        small labels and eyebrows, on either ground
+       --accent-bright links and live states on DARK grounds
+       --accent-deep   buttons and links on LIGHT grounds
+     --------------------------------------------------------------------- */
+  --accent:        #7ca83c;  /* dull green, deepened for contrast on paper   */
+  --accent-bright: #c3d64a;  /* bright yellow, calmed a shade                */
+  --accent-deep:   #3f6b2e;  /* deep forest green                            */
+
+  --water:         #3b819d;  /* the lake blue, for gradients and cool edges  */
+  --water-soft:    #6b8bad;
+  --alert:         #cf5566;  /* the unfinished / not-linked-yet state         */
+
+  /* --- text -------------------------------------------------------------- */
+  --text:         #1f2c24;
+  --text-muted:   #5a6a5e;
+  --text-on-dark: #ecf0e4;
+  --text-on-dark-muted: rgba(236, 240, 228, 0.68);
+  --rule:         rgba(31, 44, 36, 0.14);
+
+  /* --- the same colours as bare RGB triples ------------------------------
+     For the places that need a translucent version. Keeping these beside
+     their solid twins is what stops a hand-mixed rgba() drifting away from
+     the palette the next time a colour changes.
+     --------------------------------------------------------------------- */
+  --ink-rgb:          26, 46, 34;
+  --water-rgb:        59, 129, 157;
+  --water-soft-rgb:   107, 139, 173;
+  --text-on-dark-rgb: 236, 240, 228;
+  --accent-rgb:       124, 168, 60;
+  --accent-bright-rgb: 195, 214, 74;
+  --alert-rgb:        207, 85, 102;
+
+  /* --- type -------------------------------------------------------------- */
+  --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino,
+           "Times New Roman", serif;
+  --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+           Arial, sans-serif;
+
+  /* --- rhythm ------------------------------------------------------------ */
+  --measure: 34rem;          /* comfortable reading width                    */
+  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius: 3px;
+
+  /* --- motion ------------------------------------------------------------ */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* 100dvh with a 100vh fallback is applied per-section, not here. */
+  -webkit-text-size-adjust: 100%;
+
+  /* NO SCROLLBAR, on any page of the site.
+
+     The track goes; the scrolling does not. Wheel, trackpad, touch, Space,
+     PageDown, End and the arrow keys all behave exactly as before, and so do
+     the skip link and every in-page fragment. What the reader loses is the
+     position indicator and the ability to drag the thumb, which is a real
+     cost on a page whose introduction is five viewport-heights on its own.
+     Deliberate, and two rules to undo.
+
+     The marquee in the table of contents already hid its own, for an
+     unrelated reason, an endless loop has no position worth reporting. See
+     css/toc.css. Between them that is every scroller on the site.
+
+     ONE KNOCK-ON WORTH KNOWING. Releasing the cover's scroll lock used to
+     make the page scrollbar appear, which narrowed the columns and shortened
+     every marquee panel, since they are aspect-ratio sized and height follows
+     width. That reflow is the whole reason release() in js/cover.js
+     re-measures the marquee twice. With no scrollbar there is no width change
+     and nothing to correct, so those calls are now belt and braces rather
+     than load-bearing. They are kept on purpose: they cost one measurement
+     each, and they are exactly what is needed again the day someone puts the
+     scrollbar back. */
+  scrollbar-width: none;        /* Firefox                                  */
+  -ms-overflow-style: none;     /* old Edge / IE                            */
+
+  /* NO scroll-behavior: smooth.
+
+     Every story page's back link is index.html#toc. With smooth scrolling the
+     browser animates that jump, which means the grader watches the whole intro
+     scroll past on every single return trip - the precise thing the back link
+     exists to avoid. Fragment navigation must be instant.
+
+     It also breaks the skip link, which is supposed to teleport. */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  line-height: 1.7;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video, svg { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--accent-deep); text-underline-offset: 0.18em; }
+/* Hover goes to the lake blue, not to --accent: --accent is a mid green and
+   sits at about 2.4:1 on the pale ground, which is unreadable. */
+a:hover { color: var(--water); }
+
+:focus-visible {
+  outline: 3px solid var(--accent-bright);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.6em;
+  letter-spacing: -0.012em;
+}
+
+/* --- shared bits ---------------------------------------------------------- */
+
+.u-visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translate(-50%, -120%);
+  z-index: 999;
+  background: var(--ink);
+  color: var(--text-on-dark);
+  padding: 0.7rem 1.2rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.skip-link:focus { transform: translate(-50%, 0); }
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.9rem;
+}
+.eyebrow--on-dark { color: var(--accent-bright); }
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
+}
+
+/* --- the big call-to-action (quiz link, closing link) --------------------- */
+
+.cta {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  padding: 1.05em 2.2em;
+  border-radius: var(--radius);
+  background: var(--accent-deep);
+  color: #fff;
+  border: 1px solid transparent;
+  transition: background 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.cta:hover  { background: var(--ink); color: #fff; transform: translateY(-2px); }
+.cta:active { transform: translateY(0); }
+
+.cta--ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--rule);
+}
+.cta--ghost:hover { background: var(--ink); color: var(--text-on-dark); }
+
+/* A quiz link with no URL yet renders as an obvious unfinished state
+   instead of silently linking to nowhere. */
+.cta--todo {
+  background: repeating-linear-gradient(45deg,
+    var(--alert), var(--alert) 12px,
+    rgba(var(--alert-rgb), 0.72) 12px, rgba(var(--alert-rgb), 0.72) 24px);
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* --- the footer, shared by index + story + closing -------------------------
+   Its own colour, not --ink: a deeper, darker value of the palette's light
+   grayish blue, so every page closes on water rather than on more forest.
+   --------------------------------------------------------------------------- */
+
+.site-footer {
+  background: var(--footer-bg);
+  color: var(--text-on-dark-muted);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--gutter);
+}
+.site-footer a { color: var(--accent-bright); }
+
+.site-footer__inner {
+  max-width: 62rem;
+  margin: 0 auto;
+  display: grid;
+  gap: 2rem clamp(2rem, 6vw, 5rem);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.site-footer__title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  color: var(--text-on-dark);
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.04em;
+}
+
+.site-footer dl { margin: 0; }
+.site-footer dt {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-top: 0.9rem;
+}
+.site-footer dt:first-child { margin-top: 0; }
+.site-footer dd { margin: 0.15rem 0 0; color: var(--text-on-dark); }

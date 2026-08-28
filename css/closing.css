@@ -80,6 +80,18 @@
   color: var(--accent);
 }
 
+/* Sits directly under the signoff, and deliberately quieter than it. The
+   signoff is the whole class speaking and is set in the accent colour; this
+   is one person's name for building the thing, and it should read as a
+   colophon rather than compete with the line above it. */
+.closing__webcredit {
+  margin-top: 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  color: var(--text-on-dark-muted);
+}
+
 .closing__actions {
   display: flex;
   flex-wrap: wrap;

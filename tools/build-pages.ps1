@@ -368,6 +368,22 @@ if ($Problems.Count -gt 0) {
 
 function Render-Footer {
     param($Site)
+
+    # Who built the site, as opposed to who wrote and drew the stories. It is
+    # the one credit that belongs to the whole collection rather than to any
+    # one group, which is why it lives in window.SITE and not in a story.
+    #
+    # Optional, and it takes its own label with it when empty: a heading
+    # standing over nothing is worse than no heading, the same reasoning that
+    # drops the whole line for an empty subtitle further down.
+    $siteBy = @()
+    if (-not [string]::IsNullOrWhiteSpace($Site.website)) {
+        $siteBy = @(
+            '        <dt>Website by</dt>'
+            "        <dd>$(Esc $Site.website)</dd>"
+        )
+    }
+
     $lines = @(
         '<footer class="site-footer">'
         '  <div class="site-footer__inner">'
@@ -389,6 +405,7 @@ function Render-Footer {
         "        <dd>$(Esc $Site.instructor)</dd>"
         '        <dt>Academic Year</dt>'
         "        <dd>$(Esc $Site.schoolYear)</dd>"
+    ) + $siteBy + @(
         '      </dl>'
         '    </div>'
         '  </div>'

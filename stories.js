@@ -523,5 +523,6 @@ window.SITE = {
   "school": "Pambayang Dalubhasaan ng Marilao",
   "course": "TM11A",
   "instructor": "Josh Bernardo",
-  "schoolYear": "2026-2027"
+  "schoolYear": "2026-2027",
+  "website": "Christalyn Calamanan"
 };

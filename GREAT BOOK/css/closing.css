@@ -1,0 +1,166 @@
+/* ===========================================================================
+   closing.css, the closing message page
+   Required by the brief ("After the story would be the Closing message
+   interface"). Linked from every story page AND from the bottom of the TOC,
+   which satisfies both readings of "after the story".
+   =========================================================================== */
+
+.closing-page {
+  background: var(--ink);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.closing-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 45% at 25% 12%, rgba(var(--water-rgb), 0.30), transparent 62%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(var(--accent-rgb), 0.30), transparent 60%),
+    linear-gradient(168deg, #25412f 0%, #1a2e22 60%, #102019 100%);
+}
+
+.closing {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  align-content: center;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: clamp(3.5rem, 10vw, 7rem) var(--gutter);
+  color: var(--text-on-dark);
+  text-align: center;
+}
+
+.closing__mark {
+  font-size: 2rem;
+  color: var(--accent);
+  letter-spacing: 0.5em;
+  margin: 0 0 1.75rem;
+  padding-left: 0.5em;   /* optical: cancel the trailing letter-space */
+}
+
+.closing__title {
+  font-size: clamp(2.2rem, 1.4rem + 3.6vw, 4.2rem);
+  line-height: 1.05;
+  color: #fff;
+  margin: 0 0 1.5rem;
+}
+
+.closing__lede {
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.45rem);
+  font-style: italic;
+  color: var(--accent-bright);
+  margin: 0 auto 2.5rem;
+  max-width: 34ch;
+  line-height: 1.6;
+}
+
+.closing__body {
+  color: var(--text-on-dark-muted);
+  font-size: clamp(1rem, 0.96rem + 0.3vw, 1.15rem);
+  max-width: 54ch;
+  margin: 0 auto;
+  text-align: left;
+}
+.closing__body p { margin: 0 0 1.4em; }
+
+.closing__signoff {
+  margin-top: 3rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.closing__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.closing__actions .cta--ghost {
+  color: var(--text-on-dark);
+  border-color: rgba(var(--text-on-dark-rgb), 0.28);
+}
+.closing__actions .cta--ghost:hover {
+  background: var(--accent-bright);
+  color: var(--ink);
+  border-color: var(--accent-bright);
+}
+
+/* --- the credits roll ----------------------------------------------------- */
+
+.credits {
+  position: relative;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(var(--text-on-dark-rgb), 0.12);
+  padding: clamp(3rem, 7vw, 5rem) var(--gutter);
+}
+
+.credits__inner { max-width: 56rem; margin: 0 auto; }
+
+.credits h2 {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+  margin: 0 0 2.5rem;
+}
+
+.credits__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.credits__card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(var(--text-on-dark-rgb), 0.1);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.35rem;
+}
+
+.credits__card h3 {
+  font-size: 1.05rem;
+  color: var(--text-on-dark);
+  margin: 0 0 0.15rem;
+}
+
+.credits__card .credits__group {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.9rem;
+}
+
+.credits__card dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}
+.credits__card dt {
+  color: var(--text-on-dark-muted);
+  white-space: nowrap;
+}
+.credits__card dd { margin: 0; color: var(--text-on-dark); }

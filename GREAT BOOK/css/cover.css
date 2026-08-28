@@ -1,0 +1,327 @@
+/* ===========================================================================
+   cover.css, the full-viewport cover overlay and its exit transition
+   ---------------------------------------------------------------------------
+   The cover is position:fixed and sits above everything. It is NOT part of the
+   document flow, so removing it does not shift the page.
+
+   Scroll is locked while it is up. The lock and the skip-on-deep-link decision
+   are both made by the inline <script> in index.html <head>, BEFORE first paint,
+   so there is never a flash of the wrong state.
+   =========================================================================== */
+
+/* --- the scroll lock ------------------------------------------------------ */
+/* Applied by the pre-paint script as html.cover-active. */
+
+html.cover-active,
+html.cover-active body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* --- the cover itself ----------------------------------------------------- */
+
+.cover {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  text-align: center;
+  background: var(--ink);
+  color: var(--text-on-dark);
+
+  /* THE REVEAL, long, and the one transition on the site that does not use
+     --ease. Both of those follow from the same fact: this fade is no longer
+     the last thing to happen. js/cover-fx.js starts it REVEAL_LEAD_MS before
+     the swirls finish, and that lead is now most of the second movement, so
+     the reader watches the swirls turn THROUGH a screen that is already
+     clearing. Where the black actually is at each moment stops being a
+     detail and becomes the effect.
+
+     WHY 1500ms. The lead cannot exceed this number, both shader canvases
+     are children of .cover, so opacity 0 takes the swirls with it wherever
+     they happen to be. A longer fade is what buys a longer overlap. Three
+     values are involved and they live in three files; the arithmetic between
+     them is written out in full at REVEAL_LEAD_MS in js/cover-fx.js. If you
+     change the duration here, go and read that note.
+
+     WHY NOT --ease. --ease is cubic-bezier(0.22, 0.61, 0.36, 1), a hard
+     ease-out: it clears half the black in the first fifth of its run. Over a
+     fade this long and starting this early, that would throw the reader onto
+     a fully lit introduction while the swirls were still building, and the
+     rest of the movement would play over a bright page where additive light
+     does not read at all.
+
+     The curve below is symmetric, its midpoint is exactly (0.5, 0.5). It
+     opens slowly, which is the half that matters here: the black holds while
+     the swirls come up to strength, and the page arrives underneath them
+     across the back half. It also means half the duration really is half the
+     black, so the timings written in cover-fx.js mean on screen what they
+     say in the source. */
+  transition: opacity 1500ms cubic-bezier(0.4, 0, 0.6, 1),
+              visibility 1500ms;
+}
+
+/* Deep link (e.g. arriving at index.html#toc from a story page): the cover
+   never existed. No lock, no animation, no waiting. */
+html.deep-link .cover { display: none; }
+
+/* --- the bloom -------------------------------------------------------------
+   The third movement of the exit, and the only part of it that is not inside
+   .cover, in the markup it is a sibling. It has to be: it plays after the
+   swirls, when the cover is 94% faded and about to be hidden, so a child of
+   .cover would be carried off by the fade rather than by the wind.
+
+   z-index 101 puts it one above .cover (100) and well below the skip link
+   (999), which must stay reachable. It never takes a click: by the time it is
+   drawing, the page beneath is unlocked and the reader is free to scroll,
+   and a full-viewport canvas that swallowed input would be a trap.
+
+   It is `hidden` in the markup and js/cover-fx.js unhides it for the second
+   and a half it is needed. NOTE THE [hidden] RULE BELOW, which is not
+   decoration: the `hidden` attribute works by applying `display: none` at the
+   very bottom of the cascade, so any `display` declared here would silently
+   override it and leave the canvas over the page for the life of the visit.
+   --------------------------------------------------------------------------- */
+
+.bloom {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 101;
+  pointer-events: none;
+}
+
+.bloom[hidden] { display: none; }
+
+/* --- the exit transition: the raven veil -----------------------------------
+   Two inert layers that only exist for the dismissal. js/cover-fx.js grows
+   long grey ellipses inward from the rim of the screen until the centre is
+   swallowed, and only then does .cover fade to reveal the introduction.
+
+   STACKING inside .cover:  bg 0 -> content 1 -> petals 2 -> veil 3 -> motes 4.
+
+   THE VEIL SITS UNDER THE MOTES, and that ordering is the whole second half
+   of the effect. The black is the stage the swirls play on, not a curtain
+   drawn over them. Put the veil on top, where it lived when the close was a
+   single movement and the black was simply the end, and the swirls never
+   appear at all.
+
+   All three start invisible and all three stay invisible if the effect never
+   runs. Nothing here needs undoing on the fallback path: no WebGL, or
+   prefers-reduced-motion, means cover-fx.js returns without ever having
+   touched them, and the plain opacity fade below happens exactly as before.
+
+   The two canvases are two canvases because they have to be. The petals blend
+   by MULTIPLYING, which needs a white ground; the motes blend by ADDING,
+   which needs a black one. No single clear colour is the identity for both,
+   and sharing a buffer gives every mote a pale halo where its soft edge picks
+   up the white the petals need. The full reasoning is in the header of
+   js/cover-fx.js.
+   --------------------------------------------------------------------------- */
+
+.cover__fx,
+.cover__motes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.cover__fx    { z-index: 2; }   /* the grey petals, multiplying             */
+.cover__motes { z-index: 4; }   /* the swirls, adding light onto the black  */
+
+/* The black the swirls play on. It comes up over the FEATHERS across the tail
+   of the first movement and reaches solid exactly at the handover.
+
+   It sits ABOVE the feather canvas and BELOW the mote canvas, and both halves
+   of that matter.
+
+   Above the feathers, because a floor underneath them cannot finish the job:
+   they are grey and they paint on top of it, and where all their soft pointed
+   tips converge on the centre each one contributes only a weak darkening, so
+   the exact spot meant to end up most buried instead keeps a knot of mid-grey.
+   Measured, the frame stalls around three-quarters black no matter how long it
+   runs.
+
+   Below the motes, because the swirls are the second movement and they happen
+   ON this black rather than under it.
+
+   Its opacity is written frame by frame from the same rAF loop that drives
+   the shader, a CSS transition could not be kept in step with it. */
+.cover__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* THE TYPE DOES NOT FADE. It stays lit and fully placed while the dark closes
+   over it, and the feathers and the black veil are what take it off the
+   screen, which is what they are for.
+
+   It used to fade itself out over 520ms, on the reasoning that the centre of
+   the screen should be empty before the petals converged on it. That was
+   solving a problem the shader already solves. .cover__inner is z-index 1 and
+   both canvases and the veil sit above it (bg 0 → content 1 → petals 2 →
+   veil 3 → motes 4), so the title is painted OVER rather than clipped, and
+   watching it get buried is the entire point of a cave-in. Fading it first
+   meant the most dramatic stretch of the first movement closed over an empty
+   stage.
+
+   What is left is the interaction change and nothing else. There is nothing
+   visual to transition, and nothing to cancel cover-rise for, that animation
+   may go on asserting opacity 1 and transform none for the life of the page,
+   which is now precisely what we want from it. */
+html.cover-veiling .cover__inner {
+  pointer-events: none;
+}
+
+/* The reveal. With the shader running this is a fade from solid black to the
+   introduction, because the veil and the petals have already blacked the
+   screen out. Without it, it is the plain cover-to-introduction crossfade
+   this file has always done. */
+html.cover-done .cover {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* --- procedural background -------------------------------------------------
+   Pure CSS: layered radial gradients plus a slow drift. This is the RESTING
+   ground, and it stays CSS.
+
+   The WebGL seam this comment used to advertise has been taken, but by the
+   exit transition rather than by the idle background. See .cover__fx above and
+   js/cover-fx.js. A shader that runs for three seconds during a
+   dismissal costs nothing while the reader is sitting on the cover; one that
+   replaced this block would hold a GPU loop open for as long as they stay
+   here reading it.
+   --------------------------------------------------------------------------- */
+
+.cover__bg {
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 22% 14%, rgba(var(--water-rgb), 0.42), transparent 62%),
+    radial-gradient(ellipse 55% 50% at 82% 28%, rgba(var(--water-soft-rgb), 0.34), transparent 60%),
+    radial-gradient(ellipse 90% 55% at 50% 104%, rgba(var(--accent-rgb), 0.42), transparent 70%),
+    linear-gradient(165deg, #25412f 0%, #1a2e22 55%, #102019 100%);
+  animation: cover-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes cover-drift {
+  from { transform: scale(1)    translate3d(0, 0, 0); }
+  to   { transform: scale(1.08) translate3d(-1.5%, -2%, 0); }
+}
+
+/* A faint vignette to seat the type. */
+.cover__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%,
+              transparent 40%, rgba(var(--ink-rgb), 0.55) 100%);
+}
+
+/* --- cover content -------------------------------------------------------- */
+
+.cover__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  animation: cover-rise 1100ms var(--ease) both;
+}
+
+@keyframes cover-rise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+.cover__title {
+  font-size: clamp(3rem, 13vw, 8.5rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 0.98;
+  margin: 0;
+  color: var(--text-on-dark);
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.5);
+}
+
+.cover__subtitle {
+  font-size: clamp(1rem, 0.9rem + 0.7vw, 1.5rem);
+  font-style: italic;
+  color: var(--accent-bright);
+  margin: 0.9rem 0 0;
+  letter-spacing: 0.02em;
+}
+
+.cover__school {
+  font-family: var(--sans);
+  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.85rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-muted);
+  margin: 2.5rem 0 0;
+}
+
+/* --- the advance affordance -----------------------------------------------
+   The button and a downward scroll are the ONLY two ways past the cover, see
+   the header comment in js/cover.js for why clicking the background and
+   pressing any key were both removed. That makes this button the primary
+   route, not a fallback, so it has to be unmissable.
+   --------------------------------------------------------------------------- */
+
+.cover__enter {
+  margin-top: clamp(2.5rem, 7vh, 4.5rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--accent-bright);
+  border: 0;
+  border-radius: 999px;
+  padding: 1.05em 2.4em;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), background 0.25s var(--ease);
+}
+.cover__enter:hover {
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.cover__enter::after {
+  content: "";
+  width: 0.55em; height: 0.55em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  animation: cover-nudge 1.9s ease-in-out infinite;
+}
+
+@keyframes cover-nudge {
+  0%, 100% { transform: rotate(45deg) translate(-1px, -1px); }
+  50%      { transform: rotate(45deg) translate(2px, 2px); }
+}
+
+.cover__hint {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--text-on-dark-muted);
+  margin-top: 1.4rem;
+}

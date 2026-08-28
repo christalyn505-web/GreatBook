@@ -1,0 +1,984 @@
+/* ===========================================================================
+   story.css, a single story page
+   ---------------------------------------------------------------------------
+   Order is fixed by the brief and the mockup:
+     back link → title + group → illustration → audio → body → moral → quiz
+   =========================================================================== */
+
+.story-page { background: var(--ink); }
+
+/* --- the blurred illustration backdrop ------------------------------------
+   Fixed, behind everything, blurred and dimmed in CSS. The element is scaled
+   past the viewport because blur() samples beyond the box and would otherwise
+   show a soft transparent border at the edges.
+   --------------------------------------------------------------------------- */
+
+.story-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(26px) brightness(0.34) saturate(0.85);
+  transform: scale(1.15);
+  pointer-events: none;
+}
+.story-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(var(--ink-rgb), 0.55) 0%,
+    rgba(var(--ink-rgb), 0.78) 45%,
+    rgba(var(--ink-rgb), 0.92) 100%);
+}
+
+/* --- the reading column --------------------------------------------------- */
+
+.story {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2rem) var(--gutter) clamp(4rem, 9vw, 7rem);
+  color: var(--text-on-dark);
+}
+
+/* --- back link ------------------------------------------------------------ */
+
+.story__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-on-dark-muted);
+  padding: 0.9rem 0;
+  transition: color 0.2s var(--ease), gap 0.2s var(--ease);
+}
+.story__back:hover { color: var(--accent-bright); gap: 0.9rem; }
+.story__back::before { content: "←"; font-size: 1.1em; line-height: 1; }
+
+/* --- masthead ------------------------------------------------------------- */
+
+.story__head {
+  padding: clamp(1.5rem, 5vw, 3.5rem) 0 clamp(1.75rem, 4vw, 2.75rem);
+  text-align: center;
+}
+
+.story__number {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1rem;
+}
+
+.story__title {
+  font-size: clamp(2.1rem, 1.4rem + 3.4vw, 4rem);
+  line-height: 1.05;
+  margin: 0;
+  color: #fff;
+}
+
+/* The tale's original Filipino name, under the English title. */
+.story__title-alt {
+  display: block;
+  font-size: clamp(0.9rem, 0.85rem + 0.35vw, 1.15rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--text-on-dark-muted);
+  margin-top: 0.7rem;
+}
+
+/* One sentence under the title, saying what the tale is about.
+
+   Narrower than the 46rem text column on purpose. It is a single sentence
+   sitting between a large title and the byline row, and at full column width
+   it runs to one long line that reads as a stray piece of body text rather
+   than as part of the masthead. Capped and centred, it stays a caption.
+
+   Not italic: .story__title-alt directly above it already is, and two italic
+   lines stacked stop distinguishing the tale's Filipino name from a sentence
+   about the tale. */
+.story__subtitle {
+  max-width: 34rem;
+  margin: clamp(1.1rem, 2.5vw, 1.5rem) auto 0;
+  font-size: clamp(0.92rem, 0.88rem + 0.25vw, 1.04rem);
+  line-height: 1.6;
+  color: var(--text-on-dark-muted);
+  text-wrap: balance;
+}
+
+/* --- byline: avatar · written by NAME | GROUP -----------------------------
+   The mockup's masthead line. It carries the writer credit and the group name
+   in one row, which is the "Title with Group Name" item from the plan.
+   --------------------------------------------------------------------------- */
+
+.story__byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem 0.7rem;
+  margin: clamp(1.4rem, 3vw, 2rem) 0 0;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--text-on-dark-muted);
+}
+
+/* Background colour as well as image, so a missing illustration leaves a
+   deliberate dark disc rather than a transparent hole. */
+.story__avatar {
+  display: block;          /* a bare <span> is inline: width/height would no-op */
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: 50%;
+  background-color: var(--ink-soft);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 1px rgba(var(--accent-bright-rgb), 0.45);
+}
+
+.story__byline-by {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--text-on-dark-muted);
+}
+
+.story__byline-name,
+.story__byline-group {
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.story__byline-name  { color: var(--text-on-dark); }
+.story__byline-group { color: var(--accent-bright); }
+
+.story__byline-rule {
+  width: 1px;
+  height: 1.1rem;
+  background: rgba(var(--text-on-dark-rgb), 0.3);
+}
+
+/* --- illustration --------------------------------------------------------- */
+
+.story__figure { margin: 0 0 clamp(2rem, 5vw, 3rem); }
+
+.story__figure img {
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  background: var(--ink-soft);
+}
+
+.story__figure figcaption,
+.story__credit,
+.player__credit {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--text-on-dark-muted);
+  margin-top: 0.85rem;
+  text-align: center;
+}
+.story__figure figcaption strong,
+.story__credit strong,
+.player__credit strong {
+  color: var(--accent-bright);
+  font-weight: 600;
+}
+
+/* ===========================================================================
+   audio narration
+   ---------------------------------------------------------------------------
+   The transport is custom because the mockup asks for one. The native
+   <audio controls> underneath is the engine and the fallback: it stays visible
+   until js/story.js confirms it has taken over by setting .is-enhanced. If the
+   script never runs, the visitor still gets working browser controls.
+   =========================================================================== */
+
+.story__audio {
+  margin: 0 0 clamp(2.25rem, 5vw, 3.25rem);
+  padding: clamp(0.9rem, 2.5vw, 1.15rem);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(var(--text-on-dark-rgb), 0.12);
+  border-radius: var(--radius);
+}
+
+.player {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(0.85rem, 2.5vw, 1.15rem);
+}
+
+.player__art {
+  display: block;          /* see .story__avatar - inline by default */
+  width: clamp(4.5rem, 14vw, 6.5rem);
+  flex: none;
+  align-self: stretch;
+  border-radius: 2px;
+  background-color: var(--ink-soft);
+  background-size: cover;
+  background-position: center;
+}
+
+.player__main {
+  flex: 1 1 auto;
+  min-width: 0;      /* lets the seek bar shrink instead of overflowing */
+}
+
+.player__eyebrow {
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.3rem;
+}
+
+.player__name {
+  font-family: var(--sans);
+  font-size: clamp(0.95rem, 0.85rem + 0.4vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
+  margin: 0 0 0.7rem;
+}
+
+/* Hidden until the script is confirmed live, then laid out. */
+.player__transport,
+.player__minor { display: none; }
+
+.story__audio.is-enhanced .player__transport { display: flex; }
+.story__audio.is-enhanced .player__minor     { display: flex; }
+.story__audio.is-enhanced .player__audio     { display: none; }
+
+.player__transport {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.player__play {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease), background 0.15s var(--ease);
+}
+.player__play:hover  { background: var(--accent-bright); transform: scale(1.06); }
+.player__play:active { transform: scale(0.97); }
+.player__play svg    { width: 1.35rem; height: 1.35rem; }
+
+/* One button, two glyphs, swapped on the playing state. */
+.player__icon--pause,
+.story__audio.is-playing .player__icon--play { display: none; }
+.story__audio.is-playing .player__icon--pause { display: block; }
+
+.player__icon--muted,
+.story__audio.is-muted .player__icon--loud { display: none; }
+.story__audio.is-muted .player__icon--muted { display: block; }
+
+/* --- seek bar -------------------------------------------------------------
+   A real <input type="range">, so keyboard seeking, touch dragging and the
+   whole accessibility contract come from the browser. --p is the filled
+   fraction; story.js updates it. Firefox paints ::-moz-range-progress itself.
+   --------------------------------------------------------------------------- */
+
+.player__seek {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 1rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.player__seek:disabled { cursor: default; opacity: 0.5; }
+
+.player__seek::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right,
+    var(--accent-bright) var(--p, 0%),
+    rgba(var(--text-on-dark-rgb), 0.22) var(--p, 0%));
+}
+.player__seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -3.5px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+}
+.player__seek::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(var(--text-on-dark-rgb), 0.22);
+}
+.player__seek::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent-bright);
+}
+.player__seek::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.player__time {
+  flex: none;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--text-on-dark-muted);
+  white-space: nowrap;
+}
+.player__time-sep { opacity: 0.4; margin: 0 0.15rem; }
+
+/* --- skip / speed / mute --------------------------------------------------- */
+
+.player__minor {
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.player__skip,
+.player__rate,
+.player__mute {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text-on-dark-muted);
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.player__skip:hover,
+.player__rate:hover,
+.player__mute:hover {
+  color: var(--accent-bright);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.player__skip svg,
+.player__mute svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.player__mute svg polygon { fill: currentColor; stroke: none; }
+
+/* The "15" sits inside the circular arrow, as in the mockup. */
+.player__skip b {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding-top: 0.15em;
+}
+
+.player__rate {
+  width: auto;
+  min-width: 2.1rem;
+  padding: 0 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(var(--text-on-dark-rgb), 0.22);
+}
+
+/* --- native fallback + missing file ---------------------------------------- */
+
+.player__audio {
+  width: 100%;
+  margin-top: 0.9rem;
+  display: block;
+}
+
+/* --- video narration --------------------------------------------------------
+   For a group who recorded a narrated animation rather than a voice track.
+   Native controls, because the picture IS the player here - see the note in
+   tools/templates/story.html.
+
+   aspect-ratio rather than a fixed height: the frame then reserves its space
+   before the file has loaded, so the moral below it does not jump upward the
+   moment the metadata arrives. The value is overridden by the video's own
+   intrinsic ratio as soon as that is known.
+   --------------------------------------------------------------------------- */
+
+.player__video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1280 / 882;
+  border-radius: calc(var(--radius) - 2px);
+  background: #000;
+}
+
+.player__credit { margin-bottom: 0; }
+
+/* Shown by js/story.js when the mp3 is missing or will not decode, so a
+   missing asset reads as "not recorded yet" instead of a broken control. */
+.story__audio-missing {
+  display: none;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--accent-bright);
+  text-align: center;
+  padding: 0.9rem 0 0;
+  margin: 0;
+}
+.story__audio.is-missing .player__transport,
+.story__audio.is-missing .player__minor,
+.story__audio.is-missing .player__video,
+.story__audio.is-missing .player__audio { display: none; }
+.story__audio.is-missing .story__audio-missing { display: block; }
+
+/* --- body ----------------------------------------------------------------- */
+
+.story__body {
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.24rem);
+  line-height: 1.85;
+}
+
+.story__body p { margin: 0 0 1.5em; }
+
+/* --- the group's storyboard panels ------------------------------------------
+   Every hand-in is a picture book: a drawing, then the words for it, all the
+   way down. These are those drawings, printed between the paragraphs in the
+   order the group drew them.
+
+   Same width as the opening illustration but a softer shadow, so the picture
+   above the narration player still reads as the story's front and these read
+   as the story continuing. The last one drops its bottom margin because the
+   moral block below brings its own.
+
+   clear: both is load-bearing. The drop cap on the first paragraph is a
+   float, and a float escapes a block that is shorter than it is - so a story
+   that ever opens on a short paragraph would print its first panel with a
+   giant letter sitting on top of it.
+   --------------------------------------------------------------------------- */
+
+.story__panel {
+  margin: clamp(2rem, 5vw, 2.75rem) 0;
+  clear: both;
+}
+
+.story__panel img {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+  background: var(--ink-soft);
+}
+
+.story__panel:last-child { margin-bottom: 0; }
+
+/* Drop cap on the opening paragraph.
+
+   :first-of-type, not :first-child - a story whose body opens on a panel
+   would otherwise lose its drop cap without anything saying why. */
+.story__body > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.6em;
+  line-height: 0.82;
+  padding: 0.06em 0.1em 0 0;
+  color: var(--accent-bright);
+  font-weight: 600;
+}
+
+/* --- the moral -------------------------------------------------------------
+   Set apart deliberately. The brief asks for the lesson to be easy to
+   determine; buried in the prose it gives a grader nothing to point at.
+   --------------------------------------------------------------------------- */
+
+.story__moral {
+  margin: clamp(2.5rem, 6vw, 4rem) 0;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  background: rgba(var(--accent-rgb), 0.12);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.story__moral-label {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin: 0 0 0.7rem;
+}
+
+.story__moral p {
+  margin: 0;
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.45rem);
+  font-style: italic;
+  line-height: 1.55;
+  color: #fff;
+}
+
+/* --- quiz ------------------------------------------------------------------
+   The quiz is PLAYED HERE. It used to be a link out to a Google Form, which
+   needed the internet and a signed-in school account, neither of which the
+   grader is guaranteed to have while double-clicking index.html.
+
+   Two states live in this block:
+
+     .quiz__static   the printed quiz the build bakes into the page. Every
+                     question and every choice, visible with scripting off.
+     .quiz__play     what js/quiz.js swaps in: one question at a time, then
+                     a score.
+
+   Only one is ever on screen. The script empties the container before it
+   builds anything, so there is no flash of the printed version and no rule
+   here has to hide it.
+   --------------------------------------------------------------------------- */
+
+.story__quiz {
+  text-align: center;
+  margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+  padding: clamp(2rem, 5vw, 3rem) var(--gutter);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(var(--text-on-dark-rgb), 0.12);
+  border-radius: var(--radius);
+}
+
+.quiz {
+  max-width: 38rem;         /* a shade wider than --measure: choices wrap less */
+  margin: 0 auto;
+}
+
+.quiz__eyebrow {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin: 0 0 1.5rem;
+}
+
+/* --- the printed fallback --------------------------------------------------
+   Not styled to be pretty, styled to be READABLE. If this is what someone is
+   looking at, their scripting is off and the interactive quiz never arrived,
+   so what matters is that all five questions and their choices are legible
+   and correctly grouped, nothing more.
+   --------------------------------------------------------------------------- */
+
+.quiz__static {
+  text-align: left;
+  margin: 0;
+  padding: 0 0 0 1.4rem;
+  font-family: var(--sans);
+  color: var(--text-on-dark);
+}
+.quiz__static-item { margin-bottom: 1.75rem; }
+.quiz__static-item:last-child { margin-bottom: 0; }
+
+.quiz__static-q {
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.quiz__static-choices {
+  margin: 0;
+  padding: 0 0 0 1rem;
+  list-style: none;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-on-dark-muted);
+}
+
+/* --- the interactive quiz -------------------------------------------------- */
+
+.quiz__counter {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-muted);
+  margin: 0 0 0.6rem;
+}
+
+.quiz__bar {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(var(--text-on-dark-rgb), 0.14);
+  overflow: hidden;
+  margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
+}
+.quiz__bar-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent-bright);
+  transition: width 0.35s var(--ease);
+}
+
+/* The question is the loudest thing in the panel, it is the header the
+   choices answer, so it carries the display type the old link used to. */
+.quiz__q {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 1rem + 1.6vw, 1.95rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0 0 clamp(1.5rem, 4vw, 2rem);
+}
+/* Focus is moved here on every advance so the keyboard does not get stranded
+   on a button that no longer exists. That is a programmatic focus, not a
+   user-visible one, so it gets no ring. */
+.quiz__q:focus { outline: none; }
+
+.quiz__choices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.quiz__choice {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.95rem 1.15rem;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: left;
+  color: var(--text-on-dark);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(var(--text-on-dark-rgb), 0.18);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.18s var(--ease),
+              border-color 0.18s var(--ease),
+              transform 0.18s var(--ease);
+}
+.quiz__choice:hover:not(:disabled) {
+  background: rgba(var(--accent-bright-rgb), 0.12);
+  border-color: rgba(var(--accent-bright-rgb), 0.55);
+  transform: translateY(-1px);
+}
+.quiz__choice:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+.quiz__choice:disabled { cursor: default; }
+
+.quiz__choice-letter {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-bright);
+  background: rgba(var(--accent-bright-rgb), 0.14);
+}
+
+/* The pressed choice, held for the beat before the next question. Deliberately
+   NEUTRAL, not green, not red. Nothing is marked right or wrong until the
+   end, so an early answer cannot colour how the rest are read. */
+.quiz__choice.is-picked {
+  background: rgba(var(--accent-bright-rgb), 0.22);
+  border-color: var(--accent-bright);
+}
+.quiz__choice.is-picked .quiz__choice-letter {
+  color: var(--ink);
+  background: var(--accent-bright);
+}
+
+/* --- the score -------------------------------------------------------------- */
+
+.quiz__score { margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
+.quiz__score:focus { outline: none; }
+
+.quiz__score-figure {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 1.1rem + 2.4vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--text-on-dark);
+  margin: 0 0 0.5rem;
+}
+.quiz__score-figure strong {
+  color: var(--accent-bright);
+  font-size: 1.35em;
+  font-weight: 600;
+}
+
+.quiz__score-word {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--text-on-dark-muted);
+  margin: 0;
+}
+
+.quiz__review {
+  list-style: none;
+  margin: 0 0 clamp(1.75rem, 4vw, 2.25rem);
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.quiz__review-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  border-left: 3px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+}
+/* Colour AND a mark, never colour alone, roughly one boy in twelve cannot
+   tell this green from this red. */
+.quiz__review-item.is-right {
+  border-left-color: var(--accent-bright);
+  background: rgba(var(--accent-bright-rgb), 0.08);
+}
+.quiz__review-item.is-wrong {
+  border-left-color: var(--alert);
+  background: rgba(var(--alert-rgb), 0.09);
+}
+
+.quiz__mark {
+  flex: none;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.quiz__review-body {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--sans);
+}
+
+.quiz__review-q {
+  margin: 0 0 0.35rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--text-on-dark);
+}
+
+.quiz__review-answer {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-on-dark-muted);
+}
+.quiz__review-answer--correct { color: var(--accent-bright); }
+
+.quiz__review-label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.quiz__again {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.8rem 1.6rem;
+  color: var(--ink);
+  background: var(--accent-bright);
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.quiz__again:hover { background: #fff; transform: translateY(-2px); }
+.quiz__again:active { transform: translateY(0); }
+.quiz__again:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 3px;
+}
+
+/* A story whose questions have not been written yet reads as an obvious
+   unfinished state rather than an empty box. */
+.quiz-todo {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 1rem + 2vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--alert);
+  border-bottom: 2px dashed rgba(var(--alert-rgb), 0.5);
+  padding-bottom: 0.08em;
+}
+
+.story__quiz-note {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--text-on-dark-muted);
+  margin-top: 1.4rem;
+}
+
+/* The quiz is the one place on the site with motion tied to an answer rather
+   than to scrolling, so it honours the setting on its own. */
+@media (prefers-reduced-motion: reduce) {
+  .quiz__bar-fill,
+  .quiz__choice,
+  .quiz__again { transition: none; }
+  .quiz__choice:hover:not(:disabled),
+  .quiz__again:hover { transform: none; }
+}
+
+/* --- prev / next / closing ------------------------------------------------ */
+
+/* ONE ROW, ALWAYS. It used to be flex-wrap: wrap, which was fine while the
+   titles were short placeholders and broke the moment the real ones arrived:
+   "Someday, Little Carabao Will Know" and "The Philippine Eagle and the Right
+   Wind" need about 830px of uppercase between them, in a 736px column, so the
+   third link dropped to a second row and the border above it read as a gap in
+   the page.
+
+   Three things hold the row together, and all three are load-bearing:
+
+     nowrap          the instruction itself
+     flex: 1 1 0     prev and next split whatever the middle link leaves,
+                     rather than each demanding its full text width
+     min-width: 0    the one people forget. A flex item defaults to
+                     min-width: auto, which means "never shrink below my
+                     content" - so without this the other two do nothing and
+                     the row overflows instead of wrapping, which is worse.
+
+   The titles then ellipsis out. The ARROWS DO NOT, because the build emits
+   them as their own span; left inside the text run, the ellipsis would eat
+   the arrow off the end of "next" before touching a single letter. */
+
+.story__nav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: clamp(0.75rem, 2.5vw, 1.5rem);
+  justify-content: space-between;
+  align-items: center;
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding-top: 2rem;
+  border-top: 1px solid rgba(var(--text-on-dark-rgb), 0.14);
+}
+
+.story__nav a {
+  font-family: var(--sans);
+  /* A little smaller and a little tighter than the rest of the interface
+     chrome, purely to buy back characters before the ellipsis starts. */
+  font-size: clamp(0.68rem, 0.6rem + 0.3vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-on-dark-muted);
+  transition: color 0.2s var(--ease);
+}
+.story__nav a:hover { color: var(--accent-bright); }
+.story__nav a[aria-disabled="true"] { opacity: 0.3; pointer-events: none; }
+
+.story__nav-prev,
+.story__nav-next {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.story__nav-next { justify-content: flex-end; text-align: right; }
+
+/* The middle link keeps its full width, it is the shortest of the three and
+   the only one on every page, so shrinking it first would be backwards. */
+.story__nav-closing {
+  flex: 0 0 auto;
+  color: var(--accent-bright) !important;
+}
+
+.story__nav-arrow { flex: none; }
+
+.story__nav-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Below about 34rem there is no width left to truncate INTO, three uppercase
+   labels would each get roughly six characters, which is not a word. So the
+   titles go visually hidden and the arrows carry the row on their own.
+
+   Hidden, not removed: the text stays in the accessibility tree, so the link
+   is still announced as "Previous story: The Wish" rather than as a bare
+   arrow with no name. That is why the build wraps the direction in a
+   .u-visually-hidden span instead of relying on the arrow glyph. */
+@media (max-width: 34rem) {
+  .story__nav-label {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .story__nav-arrow { font-size: 1.3em; }
+}
+
+/* --- narrow screens -------------------------------------------------------- */
+
+@media (max-width: 30rem) {
+  .player { display: block; }
+  .player__art {
+    width: 100%;
+    height: 8rem;
+    margin-bottom: 0.85rem;
+  }
+  .player__time { font-size: 0.65rem; }
+}

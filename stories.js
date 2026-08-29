@@ -472,6 +472,7 @@ window.STORIES = [
     "writer": "Leo Kid Gregorio",
     "illustrator": "Alianah Mischa Bigting and Marian Brusas",
     "narrator": "Glesy Casino",
+    "contributors": "Rhea Mae B. Mamales (title and voice-over), Jelyn P. Lanuza (compilation and voice-over), and Kristine Garciano (voice-over and voice-over edit)",
     "cover": "./assets/img/05-cover.jpg",
     "illustration": "./assets/img/05.jpg",
     "audio": "./assets/audio/05.mp3",

@@ -164,10 +164,10 @@ window.STORIES = [
     "paragraphLimit": 7,
     "body": [
       "In a quiet Filipino village surrounded by green rice fields, where the air whistles softly, there lived a young carabao named Bago and his mother, Nanay Tala. Every morning Nanay Tala would wake early, earlier than the sun, and she would wake Bago before the sun rose. “Come, anak, we need to help at the barrio,” she would say.",
-      { "image": "./assets/img/01-s2.jpg", "alt": "Nanay Tala says “let me help you” to four villagers holding baskets of produce, while a question mark hangs over Bago’s head." },
-      { "image": "./assets/img/01-s3.jpg", "alt": "Bago wonders “huh? why do nanay keeps helping?” as Nanay Tala offers “let me help you” to a farmer and a young rice picker." },
+      { "image": "./assets/img/01-s2.jpg", "alt": "Bago and Nanay Tala stand together in the golden rice field beside their nipa hut, under a smiling sun." },
+      { "image": "./assets/img/01-s3.jpg", "alt": "Nanay Tala says “let me help you” to four villagers holding baskets of produce, while a question mark hangs over Bago’s head." },
       "Bago would follow his mother through the village, but he would often wonder why she always stopped to help others.",
-      { "image": "./assets/img/01-s4.jpg", "alt": "Nanay Tala calls “Come anak, we need to help at the Barrio” while Bago dozes beside the nipa hut in the rice field." },
+      { "image": "./assets/img/01-s4.jpg", "alt": "Bago wonders “huh? why do nanay keeps helping?” as Nanay Tala offers “let me help you” to a farmer and a young rice picker." },
       "She helped the farmers carry heavy bundles of vegetables. She would share their food with hungry goats. She would help the smallest animals cross the muddy road.",
       { "image": "./assets/img/01-s5.jpg", "alt": "Bago asks “Nanay, why do you always help them?” and Nanay Tala answers “Someday, you will understand.”" },
       "One morning Bago asked, “Nanay, why do you always help everyone? What benefit will you receive? Aren’t you tired?” Nanay Tala smiled. “Of course I get tired, anak, but life is easier when we help one another.” “But what if they never help us back?” Bago asked. Nanay Tala gently touched his head with hers. “Helping is not always about getting something in return. Someday you will understand.” But Bago did not completely understand.",

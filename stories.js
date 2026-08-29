@@ -28,6 +28,11 @@
      writer        credited on the page - required by the brief
      illustrator   credited under the illustration - required by the brief
      narrator      credited under the audio player - required by the brief
+     contributors  optional. The group's own roster, printed as an extra
+                   "Group members" row on the closing page's credits card.
+                   Leave it out and NO ROW APPEARS - unlike the three above
+                   it is not padded with a dash, because a dash against a
+                   field a group never filled in reads as missing work.
      cover         relative path. The group's COVER image - the one with the
                    title painted into it. Used ONLY by the marquee card in the
                    table of contents. Leave "" and the marquee falls back to
@@ -73,12 +78,15 @@
    A story may raise the cap with "paragraphLimit". Story 01 does, and here is
    the reasoning, because it is the brief's rule being traded away:
 
-     Group 1's flow is SEVEN drawings, each with its own block of text. Four
-     paragraphs means merging those seven blocks into four, which leaves
-     drawings stacked two and three deep with no words between them. Their
-     hand-in is a picture book and it stops reading like one.
+     Group 1's flow is SEVEN blocks of text, each with its own drawing or
+     two. Four paragraphs means merging those seven blocks into four, which
+     leaves drawings stacked three and four deep with no words between
+     them. Their hand-in is a picture book and it stops reading like one.
 
-   So story 01 prints one text block per drawing, seven of each, alternating.
+   So story 01 prints one text block per beat of the story, seven of them,
+   with its twelve drawings threaded between - one where a beat has a single
+   picture, two where the group drew the moment twice. The paragraph count is
+   what the cap governs; PANELS ARE FREE.
    THE BUILD WARNS ABOUT THIS ON EVERY RUN and that warning is meant to stay:
    if the brief turns out to be strict about the number, merge the blocks back
    and drop "paragraphLimit". Nothing else has to change.
@@ -144,10 +152,11 @@ window.STORIES = [
     "titleFil": "",
     "subtitle": "The story reflects the Filipino value of bayanihan, where people help one another and share their strength, especially during difficult times.",
     "group": "Group 1",
-    "writer": "Andrea Nieves, Sabina Nuestro, Ryan Sagun, and Jillianne Satera",
+    "writer": "Clarizze Andrea Mae Nieves, Sabina Kristina Nuestro, Ryan Sagun, and Jilliane Satera",
     "illustrator": "Josh Pagaduan",
-    "narrator": "Hershey Mangahas, Sabina Nuestro, and Ryan Sagun",
-    "cover": "",
+    "narrator": "Hershey Mangahas, Sabina Kristina Nuestro, and Ryan Sagun",
+    "contributors": "Josh Pagaduan, Sabina Kristina Nuestro, Clarizze Andrea Mae Nieves, and Jilliane Satera",
+    "cover": "./assets/img/01-cover.jpg",
     "illustration": "./assets/img/01.jpg",
     "audio": "./assets/audio/01.mp3",
     "video": "",
@@ -155,18 +164,23 @@ window.STORIES = [
     "paragraphLimit": 7,
     "body": [
       "In a quiet Filipino village surrounded by green rice fields, where the air whistles softly, there lived a young carabao named Bago and his mother, Nanay Tala. Every morning Nanay Tala would wake early, earlier than the sun, and she would wake Bago before the sun rose. “Come, anak, we need to help at the barrio,” she would say.",
-      { "image": "./assets/img/01-s2.jpg", "alt": "Nanay Tala walks the village path with her basket while Bago follows her past the orange houses." },
+      { "image": "./assets/img/01-s2.jpg", "alt": "Nanay Tala calls “Come anak, we need to help at the Barrio” while Bago dozes beside the nipa hut in the rice field." },
+      { "image": "./assets/img/01-s3.jpg", "alt": "Mother and son out in the barrio, among a farmer with a basket, a woman on a tractor, a man carrying vegetables on a shoulder pole, a monkey, a rabbit and a goat." },
       "Bago would follow his mother through the village, but he would often wonder why she always stopped to help others.",
-      { "image": "./assets/img/01-s3.jpg", "alt": "Goats grazing at the roadside of the barrio, with a rabbit and a pig nearby." },
+      { "image": "./assets/img/01-s4.jpg", "alt": "A farmer and his wife carry heavy baskets of vegetables and fruit past Bago and a small pale carabao." },
+      { "image": "./assets/img/01-s5.jpg", "alt": "Nanay Tala says “let me help you” to four villagers holding baskets of produce, while a question mark hangs over Bago’s head." },
       "She helped the farmers carry heavy bundles of vegetables. She would share their food with hungry goats. She would help the smallest animals cross the muddy road.",
-      { "image": "./assets/img/01-s4.jpg", "alt": "Bago and Nanay Tala at the water below the village houses, under a bright morning sun." },
+      { "image": "./assets/img/01-s6.jpg", "alt": "Bago wonders “huh? why do nanay keeps helping?” as Nanay Tala offers “let me help you” to a farmer and a young rice picker." },
+      { "image": "./assets/img/01-s7.jpg", "alt": "Bago asks “Nanay, why do you always help them?” and Nanay Tala answers “Someday, you will understand.”" },
       "One morning Bago asked, “Nanay, why do you always help everyone? What benefit will you receive? Aren’t you tired?” Nanay Tala smiled. “Of course I get tired, anak, but life is easier when we help one another.” “But what if they never help us back?” Bago asked. Nanay Tala gently touched his head with hers. “Helping is not always about getting something in return. Someday you will understand.” But Bago did not completely understand.",
-      { "image": "./assets/img/01-s5.jpg", "alt": "Storm clouds pour rain over the green hills and the flooded brown field below the houses." },
+      { "image": "./assets/img/01-s8.jpg", "alt": "Rain falls across the field and the animals scatter, a basket spilled beside the goat and the monkey crying out." },
+      { "image": "./assets/img/01-s9.jpg", "alt": "Lightning over the flooding field. Nanay Tala asks “what should we do, anak?” as an idea lights up above Bago and the rabbit, monkey, turtle and bird call for help from the last dry ground." },
       "As the years passed, Bago grew bigger and stronger. One rainy afternoon a strong storm flooded the village. The animals struggled to move their food and belongings to a safer place. Bago stood at the edge of the field. He remembered all the times he had watched his mother help others. Then he stepped forward. “Come on, let’s help each other,” he called. There, the animals worked together, the birds carried small twigs, the goats pulled ropes, the monkeys gathered the food, and Bago used his strength to carry the heaviest things. By the time the rain stopped, everyone was safe.",
-      { "image": "./assets/img/01-s6.jpg", "alt": "Bago and Nanay Tala resting together on the green hillside below the house after the storm." },
+      { "image": "./assets/img/01-s10.jpg", "alt": "The animals work together in the rain: Bago hauls a chain with the goat, the birds carry twigs, and Nanay Tala carries the heaviest basket." },
       "Upon looking, Bago saw Nanay Tala watching her son with a proud look. “You finally understand. That someday has finally arrived,” she said. Bago looked at her. “I think I do, Nanay,” he answered. “What did you learn?” Bago smiled. “That being strong isn’t only about being able to carry something heavy.” He looked around. “Sometimes being strong means being there for someone who needs you.” Nanay Tala smiled. “That is what bayanihan means, anak.”",
-      { "image": "./assets/img/01-s7.jpg", "alt": "Grown Bago stands nose to nose with his own child beside the pond, years later." },
-      "Years later, Bago would become a father himself, and whenever his son asked why he always stopped for others, Bago would always answer, “Someday, you will understand.” And just as his mother had taught him, he would teach his child that no one should have to carry life’s burdens alone, because at the end of the day, bayanihan exists, and every person has a heart willing to lend a hand. For in every helping hand a little kindness is passed on, and through every act of kindness the love of a person lives on."
+      { "image": "./assets/img/01-s11.jpg", "alt": "Bago, now grown, stands in the rice field beside a small pale carabao." },
+      "Years later, Bago would become a father himself, and whenever his son asked why he always stopped for others, Bago would always answer, “Someday, you will understand.” And just as his mother had taught him, he would teach his child that no one should have to carry life’s burdens alone, because at the end of the day, bayanihan exists, and every person has a heart willing to lend a hand. For in every helping hand a little kindness is passed on, and through every act of kindness the love of a person lives on.",
+      { "image": "./assets/img/01-s12.jpg", "alt": "The End, painted in the sky above the green field and the flowering bush." }
     ],
     "quiz": [
       {

@@ -655,7 +655,8 @@ to the manifest adds it to both automatically.
 are two different pictures. The cover is the one with the story's title painted
 into it; the illustration is the story's first page. `js/toc.js` reads
 `story.cover` and falls back to `story.illustration` for a group that never
-made a title card, which is what story 01 does.
+made a title card. **Every story now has one**, so nothing falls back today;
+the fallback is kept because it is what a half-finished group looks like.
 
 That changes what a bad crop costs here. On the story page a crop would lose
 scenery; on a card it beheads a word.
@@ -762,8 +763,8 @@ rearrange it.
 drawing, then the words for that drawing, over and over. Their storyboards run
 to seven, eight, nine panels.
 
-Story 01 prints that flow one-to-one: seven drawings, seven blocks of text,
-alternating. That needs seven paragraphs where the brief allows four, so the
+Story 01 prints that flow with **twelve drawings across seven blocks of
+text**. Seven blocks needs seven paragraphs where the brief allows four, so the
 story sets `paragraphLimit` in `stories.js` and **every build warns about it**.
 The warning is meant to stay, it is the brief's rule being deliberately traded
 for the group's layout, and if the brief turns out to be strict, merging the
@@ -933,6 +934,7 @@ Dark ground again, fixed gradient backdrop, 48rem centred column.
 │  │ Written by … │ │ Written by … │ │ Written by … │  │
 │  │ Illustr. by… │ │ Illustr. by… │ │ Illustr. by… │  │
 │  │ Narrated by… │ │ Narrated by… │ │ Narrated by… │  │
+│  │ Group memb.… │ │              │ │              │  │  optional, story 01
 │  └──────────────┘ └──────────────┘ └──────────────┘  │
 └──────────────────────────────────────────────────────┘
 ```
@@ -941,6 +943,15 @@ The credits grid is built by `js/closing.js` from `window.STORIES`, the same
 manifest the story pages are generated from. That is the point: the brief's
 per-member attribution requirement can only ever be satisfied in one place, so
 there is no second list to forget.
+
+**Written by / Illustrated by / Narrated by always print**, with a dash where
+a name is missing, because those three are the brief's and a visible gap is
+the honest state. A card may also carry a fourth row, **Group members**, from
+an optional `contributors` field, the group's own roster where it differs from
+who took which role. That one is skipped entirely on a story without it rather
+than printed as a dash: padding four cards against a field their group never
+filled in reads as missing work, not as an absent extra. Story 01 is currently
+the only one with a roster.
 
 The closing message is written: a lede and two paragraphs arguing that fables
 are not a warm-up act for literature but the floor it was built on, and that
